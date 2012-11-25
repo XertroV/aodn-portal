@@ -21,6 +21,7 @@ grails.project.dependency.resolution = {
     }
     log "warn" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
     repositories {
+		grailsRepo 'http://grails.org/plugins' // Repo containing jslint 0.5
         grailsPlugins()
         grailsHome()
         grailsCentral()
@@ -42,7 +43,9 @@ grails.project.dependency.resolution = {
 	
 	// Allow grails commands to be run as usual, see: http://grails.org/doc/latest/guide/conf.html#mavenIntegration
 	pom true	
+	
 	plugins {
+		compile ':jslint:0.5'
 		test ":build-test-data:1.1.2"
 	}
 }
