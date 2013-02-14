@@ -78,8 +78,6 @@ Read the [Getting Started guide](https://github.com/aodn/aodn-portal/wiki/Gettin
 
 ## Acknowledgements
 
-### YourKit
-
 ![YourKit logo](resources/yourkit.png)
 
 YourKit is kindly supporting open source projects with its full-featured Java Profiler.
