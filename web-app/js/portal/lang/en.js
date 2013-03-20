@@ -8,6 +8,10 @@
 
 OpenLayers.Util.extend(OpenLayers.Lang.en, {
 
+    //DownloadCartPanel.js
+    okdownload: 'OK Download Selected',
+    clearcart: "Clear Cart",
+
     layerChooserMenuHeader: 'Map Layer Chooser',
 
     // Animation Panel

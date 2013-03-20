@@ -20,8 +20,7 @@ Portal.ui.MainTabPanel = Ext.extend(Ext.TabPanel, {
             autoDestroy:false, // wont destroy tab contents when switching
             activeTab:0,
             margins:{right:5},
-            cls: "idme",
-            //unstyled:true,
+            unstyled:true,
             // method to hide the usual tab panel header with css
             headerCfg:{
                 cls:'mainTabPanelHeader'  // Default class not applied if Custom element specified

@@ -248,13 +248,15 @@ a.userlink {
 
 #downloadCartStatus {
     background: url("../images/mapshadow.png") repeat-x scroll left top #0079C2;
-    border-radius: 10px 3px 10px 3px;
+    border-radius: 14px ;
     color: white;
     float: right;
     padding: 4px 10px 6px;
     position: absolute;
     right: 25px;
     top: 45px;
+
+    box-shadow: 2px 2px 1px 0 #cccccc;
 }
 
 #downloadCartStatus div {
@@ -273,11 +275,14 @@ a.userlink {
     text-decoration: underline;
 }
 
-
-
  #downloadCartStatus {
      text-align: right;
  }
+
+.styledButton {
+    background-color: #ff9900;
+    box-shadow: 2px 2px 3px 0 #EEEEEE;
+}
 
 .x-tab-strip span.x-tab-strip-text {
     color: #666;
