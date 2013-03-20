@@ -5,9 +5,26 @@ Portal.ui.DownloadList = Ext.extend(Ext.grid.GridPanel, {
 
     initComponent: function() {
         var config = {
-            colModel : new Ext.grid.ColumnModel([
-                { sortable: false}
-            ]),
+            colModel : new Ext.grid.ColumnModel({
+                defaults:{
+                    menuDisabled:true,
+                    width:800
+                },
+                columns:[
+                    {
+                        id:'mdDesc',
+                        header:OpenLayers.i18n('descHeading'),
+                        dataIndex:'title',
+                        //width:100,
+                        xtype:'templatecolumn',
+                        tpl: [
+                            '<div style="white-space:normal !important;" title="{title}">',
+                            '<h4>{title}</h4>',
+                            '</div>'
+                        ]
+                    }
+                ]
+            }),
             store : new Ext.data.JsonStore({
                 // store configs
                 autoDestroy: true,

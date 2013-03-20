@@ -69,27 +69,33 @@ class DownloadCartController {
     def getCartRecords = {
 
         def cart = _getCart()
-        println(cart)
         def compiledResult = [:]
-        def goneThruRecords = []
-        def records = []
+        def records = [:]
         cart.each{
 
             def uuid = it.rec_uuid
 
-            if (!goneThruRecords.contains(uuid))
-            {
-                def record = [:]
+            def record = records.get(uuid)
+            println(record)
+            if (!record){
+                record = [:]
                 record.title = it.rec_title
                 record.uuid= uuid
-
-
-                goneThruRecords.add(uuid)
-                records.add(record)
+                record.downloads = []
+                records.put(uuid,record)
             }
+
+            def download = [:]
+
+            download.protocol = it.protocol
+            download.title = it.title
+            download.href = it.href
+            download.type = it.type
+
+            record.downloads.add(download)
         }
 
-        compiledResult.put("records", records)
+        compiledResult.put("records", records.values())
 
         render compiledResult as JSON
     }
