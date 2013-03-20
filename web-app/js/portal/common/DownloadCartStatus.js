@@ -83,12 +83,13 @@ function doDownload(){
 	Ext.Ajax.request({
 		url: 'downloadCart/getSize',
 		success: function(resp){
-			if(resp.responseText === "0"){
-				alert("The download cart is empty.  Please add at least one item to the cart and try again.");
-			}
-			else{
-				new Portal.ui.DownloadCartConfirmationWindow().show();
-			}
+			//if(resp.responseText === "0"){
+			//	alert("The download cart is empty.  Please add an item to the cart and try again.");
+			//}
+			//else{
+				//new Portal.ui.DownloadCartConfirmationWindow().show();
+
+			//}
 		},
 		failure: function(){
 			alert("There is a problem with the download cart and please try again later.  Please refer to our Help section for further assistance.");
@@ -160,21 +161,26 @@ function _updateCount( count ) {
 
 function _showCartControl() {
 
-    var cartEl = Ext.get( 'downloadCart' );
+    var cartEl = Ext.get( 'downloadCartStatus' );
 
-    cartEl.removeClass( 'hiddenCart' );
+    cartEl.removeClass( 'hiddenCartStatus' );
+}
+
+function showCartTabPanel() {
+
+    Ext.MsgBus.publish("openDownloadCartPanelItem","downloadCartPanel");
 }
 
 function _hideCartControl() {
 
-    var cartEl = Ext.get( 'downloadCart' );
+    var cartEl = Ext.get( 'downloadCartStatus' );
 
-    cartEl.addClass( 'hiddenCart' );
+    cartEl.addClass( 'hiddenCartStatus' );
 }
 
 function _flashUI() {
     
-    var cartEl = Ext.get('downloadCart');
+    var cartEl = Ext.get('downloadCartStatus');
     
     // Animate UI
     cartEl.animate(
@@ -196,7 +202,7 @@ function _getDownloadCartUIOriginalColor() {
     
     if ( _downloadCartOriginalColor == undefined ) {
         
-        _downloadCartOriginalColor = Ext.get('downloadCart').getStyles('backgroundColor').backgroundColor;
+        _downloadCartOriginalColor = Ext.get('downloadCartStatus').getStyles('backgroundColor').backgroundColor;
     }
     
     return _downloadCartOriginalColor;

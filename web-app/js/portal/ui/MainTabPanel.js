@@ -13,13 +13,15 @@ Portal.ui.MainTabPanel = Ext.extend(Ext.TabPanel, {
         this.portalPanel = new Portal.ui.PortalPanel({appConfig:Portal.app.config, startSnapshot:cfg.startSnapshot});
         this.searchTabPanel = new Portal.search.SearchTabPanel({mapPanel:this.getMapPanel()});
         this.homePanel = new Portal.ui.HomePanel({appConfig:Portal.app.config});
+        this.downloadCartPanel = new Portal.ui.DownloadCartPanel();
 
         var config = Ext.apply({
             xtype:'tabpanel', // TabPanel itself has no title
             autoDestroy:false, // wont destroy tab contents when switching
             activeTab:0,
             margins:{right:5},
-            unstyled:true,
+            cls: "idme",
+            //unstyled:true,
             // method to hide the usual tab panel header with css
             headerCfg:{
                 cls:'mainTabPanelHeader'  // Default class not applied if Custom element specified
@@ -27,7 +29,8 @@ Portal.ui.MainTabPanel = Ext.extend(Ext.TabPanel, {
             items:[
                 this.homePanel,
                 this.portalPanel,
-                this.searchTabPanel
+                this.searchTabPanel,
+                this.downloadCartPanel
             ]
         }, cfg);
 
@@ -36,9 +39,14 @@ Portal.ui.MainTabPanel = Ext.extend(Ext.TabPanel, {
         this.on('tabchange', function () {
             this.portalPanel.fireEvent('tabchange');
         }, this);
+        Ext.MsgBus.subscribe('openDownloadCartPanelItem', function() {
+            this.setActiveTab(3);
+        }, this);
 
         Ext.MsgBus.subscribe('selectedLayerChanged', this.onSelectedLayerChange, this);
     },
+
+
 
     getPortalPanel:function () {
         return this.portalPanel;

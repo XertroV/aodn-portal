@@ -84,6 +84,7 @@ a img{
     border: none;
 }
 
+
 hr {
     border: 0;
     height: 1px;
@@ -973,6 +974,11 @@ div.allwhite {
 
 #activeLayerTreePanel img.x-tree-node-icon {
 	width: 1px;
+}
+
+
+#header .hiddenCartStatus {
+    display: block;
 }
 
 /* Bug #9 - show blank tiles on image load error. */
