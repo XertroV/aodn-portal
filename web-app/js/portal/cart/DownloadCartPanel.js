@@ -7,9 +7,9 @@
  */
 
 
-Ext.namespace('Portal.ui');
+Ext.namespace('Portal.cart');
 
-Portal.ui.DownloadCartPanel = Ext.extend(Ext.Panel, {
+Portal.cart.DownloadCartPanel = Ext.extend(Ext.Panel, {
 
     constructor: function(cfg) {
 
@@ -29,14 +29,14 @@ Portal.ui.DownloadCartPanel = Ext.extend(Ext.Panel, {
                     stateful: false,
                     html: "herewegoherewegoherewego",
                     items: [
-                        //new Portal.ui.DownloadCartOptionsPanel()
+                        //new Portal.cart.DownloadCartOptionsPanel()
                     ]
                 }
             ]
 
         }, cfg);
 
-        Portal.ui.DownloadCartPanel.superclass.constructor.call(this, config);
+        Portal.cart.DownloadCartPanel.superclass.constructor.call(this, config);
     }
 });
 
