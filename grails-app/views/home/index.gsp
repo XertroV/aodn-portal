@@ -260,7 +260,7 @@
         <script src="${resource(dir: 'js', file: 'portal/mainMap/map.js')}?${jsVerNum}" type="text/javascript"></script>
         <script src="${resource(dir: 'js', file: 'portal/mainMap/TransectControl.js')}?${jsVerNum}"
                 type="text/javascript"></script>
-        <script src="${resource(dir: 'js', file: 'portal/common/DownloadCart.js')}?${jsVerNum}"
+        <script src="${resource(dir: 'js', file: 'portal/common/DownloadCartStatus.js')}?${jsVerNum}"
                 type="text/javascript"></script>
         <script src="${resource(dir: 'js', file: 'portal/portal.js')}?${jsVerNum}" type="text/javascript"></script>
         <script src="${resource(dir: 'js', file: 'portal/common/GeoExt.ux.BaseLayerCombobox.js')}?${jsVerNum}"
@@ -268,6 +268,8 @@
         <script src="${resource(dir: 'js', file: 'portal/common/LayerOpacitySliderFixed.js')}?${jsVerNum}"
                 type="text/javascript"></script>
         <script src="${resource(dir: 'js', file: 'portal/ui/MenuPanel.js')}?${jsVerNum}"
+                type="text/javascript"></script>
+        <script src="${resource(dir: 'js', file: 'portal/ui/DownloadCartPanel.js')}?${jsVerNum}"
                 type="text/javascript"></script>
     </g:if>
     <g:else>
