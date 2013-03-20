@@ -13,6 +13,26 @@ Portal.cart.DownloadCartPanel = Ext.extend(Ext.Panel, {
 
     constructor: function(cfg) {
 
+        var footer = new Ext.Panel( {
+            region: 'south',
+            height: 80,
+            padding: '20px',
+            unstyled: true,
+            //items: [{
+                layout: 'fit',
+                anchor:'right 20%',
+
+                html: '<span class="styledButton">' +
+                    '<a href="#" onclick="javascript:doDownload();">' +
+                    OpenLayers.i18n('okdownload') +
+                    '</a></span> ' +
+                    '<span class="styledButton">' +
+                    '<a href="javascript:clearDownloadCart();">' +
+                    OpenLayers.i18n('clearcart') +
+                    '</a></span>'
+            //}]
+        });
+
         var config = Ext.apply({
 
             layout: 'border',
@@ -21,8 +41,16 @@ Portal.cart.DownloadCartPanel = Ext.extend(Ext.Panel, {
             minHeight: 600,
             items: [
                 {
+                    // this is a temporary header block until portal 3 workflow
+                    region: 'north',
+                    height: 70,
+                    padding: '10px',
+                    html: '<div class="menuHeader">Data Download Cart</div>'
+                },
+                {
                     region:'center',
                     layout:'fit',
+                    padding: '20px',
                     //minHeight: 600,
                     padding:  '0px 5px 0px 0px',
                     unstyled: true,
@@ -31,7 +59,9 @@ Portal.cart.DownloadCartPanel = Ext.extend(Ext.Panel, {
                     items: [
                         //new Portal.cart.DownloadCartOptionsPanel()
                     ]
-                }
+                },
+                footer
+
             ]
 
         }, cfg);
