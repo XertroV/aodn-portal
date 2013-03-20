@@ -6,7 +6,7 @@
  *
  */
 
-Ext.namespace('Portal.cart.downloadCart');
+Ext.namespace('Portal.cart.downloadCartStatus');
 
 Ext.EventManager.addListener( window, 'load', getInitialDownloadCartCount );
 
