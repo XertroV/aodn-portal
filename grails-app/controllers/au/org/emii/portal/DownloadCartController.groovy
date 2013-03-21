@@ -76,7 +76,6 @@ class DownloadCartController {
             def uuid = it.rec_uuid
 
             def record = records.get(uuid)
-            println(record)
             if (!record){
                 record = [:]
                 record.title = it.rec_title
