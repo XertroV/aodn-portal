@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2012 IMOS
  *
@@ -57,7 +56,7 @@ Portal.cart.DownloadCartPanel = Ext.extend(Ext.Panel, {
                     stateful: false,
                     html: "herewegoherewegoherewego",
                     items: [
-                        //new Portal.cart.DownloadCartOptionsPanel()
+                        new Portal.cart.DownloadList()
                     ]
                 },
                 footer

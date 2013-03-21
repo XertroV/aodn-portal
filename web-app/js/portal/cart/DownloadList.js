@@ -1,4 +1,4 @@
-Portal.ui.DownloadList = Ext.extend(Ext.grid.GridPanel, {
+Portal.cart.DownloadList = Ext.extend(Ext.grid.GridPanel, {
     frame: false,
     layout: 'fit',
     border: false,
@@ -40,7 +40,7 @@ Portal.ui.DownloadList = Ext.extend(Ext.grid.GridPanel, {
 
         Ext.apply(this, Ext.apply(this.initialConfig, config));
 
-        Portal.ui.DownloadList.superclass.initComponent.apply(this, arguments)
+        Portal.cart.DownloadList.superclass.initComponent.apply(this, arguments)
 
         this.store.load();
 
@@ -48,4 +48,4 @@ Portal.ui.DownloadList = Ext.extend(Ext.grid.GridPanel, {
     }
 });
 
-Ext.reg('portal.ui.downloadList', Portal.ui.DownloadList);
+Ext.reg('portal.cart.downloadList', Portal.cart.DownloadList);
