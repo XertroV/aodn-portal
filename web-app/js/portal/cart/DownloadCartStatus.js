@@ -97,9 +97,7 @@ function doDownload(){
 	});
 }
 
-// Internal methods
-function _handleSuccessAndShow( resp ) {
-
+function _handleSuccess( resp ) {
     var response = resp.responseText;
 
     if ( !_isValidNumber( response ) ) {
@@ -112,24 +110,18 @@ function _handleSuccessAndShow( resp ) {
         _updateCount( response );
     }
 
+    Ext.MsgBus.publish("downloadCart.cartContentsUpdated");
+}
+
+// Internal methods
+function _handleSuccessAndShow( resp ) {
+    _handleSuccess(resp);
     _showCartControl();
     _flashUI();
 }
 
 function _handleSuccessAndHide( resp ) {
-
-    var response = resp.responseText;
-
-    if ( !_isValidNumber( response ) ) {
-
-        console.log( 'Invalid response from server: \'' + response + '\' (but with success code ' + resp.status + ')' );
-        _updateCount( "?" );
-    }
-    else {
-
-        _updateCount( response );
-    }
-
+    _handleSuccess(resp);
     _hideCartControl();
     _flashUI();
 }

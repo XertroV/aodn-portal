@@ -44,6 +44,11 @@ Portal.cart.DownloadList = Ext.extend(Ext.grid.GridPanel, {
 
         this.store.load();
 
+        Ext.MsgBus.subscribe("downloadCart.cartContentsUpdated", function() {
+            this.store.load();
+            console.log("UPDATED");
+        }, this);
+
         console.log(this.store);
     }
 });
