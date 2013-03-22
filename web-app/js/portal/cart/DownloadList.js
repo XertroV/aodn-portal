@@ -1,49 +1,62 @@
-Portal.cart.DownloadList = Ext.extend(Ext.grid.GridPanel, {
-    frame: false,
-    layout: 'fit',
-    border: false,
+Ext.namespace('Portal.cart');
 
-    initComponent: function() {
-        var config = {
-            colModel : new Ext.grid.ColumnModel({
-                defaults:{
-                    menuDisabled:true,
-                    width:800
-                },
-                columns:[
-                    {
-                        id:'mdDesc',
-                        header:OpenLayers.i18n('descHeading'),
-                        dataIndex:'title',
-                        //width:100,
-                        xtype:'templatecolumn',
-                        tpl: [
-                            '<div style="white-space:normal !important;" title="{title}">',
-                            '<h4>{title}</h4>',
-                            '</div>'
-                        ]
-                    }
-                ]
-            }),
-            store : new Ext.data.JsonStore({
-                // store configs
-                autoDestroy: true,
-                url: 'downloadCart/getCartRecords',
-                storeId: 'myStore',
-                // reader configs
-                root: 'records',
-                idProperty: 'title',
-                fields: ['title', 'uuid']
-            })
-        };
+Portal.cart.DownloadList = Ext.extend(Ext.DataView, {
 
 
-        Ext.apply(this, Ext.apply(this.initialConfig, config));
 
-        Portal.cart.DownloadList.superclass.initComponent.apply(this, arguments)
 
-        this.store.load();
+    constructor: function (cfg) {
 
+        this.downloadItemsStore = new Ext.data.JsonStore({
+            // store configs
+            autoDestroy: true,
+            url: 'downloadCart/getCartRecords',
+            storeId: 'myStore',
+            // reader configs
+            root: 'records',
+            idProperty: 'title',
+            fields: ['title', 'uuid','downloads']
+        });
+        this.downloadItemsStore.load();
+
+        var template = new Ext.XTemplate(
+            '<tpl for=".">',
+            '<div class="x-grid3-row" >',
+            '<span class="x-editable">{title}</span></div>',
+            '</tpl>',
+            '<div class="x-clear"></div>'
+        );
+
+
+        var config = Ext.apply({
+            id: "downloadList",
+            store: this.downloadItemsStore,
+            loadingText: "are we there yet",
+            emptyText: "are we not yet",
+            autoShow: true,
+            tpl: template,
+            overClass:'doesitpickthisup',
+            minHeight: 600
+        }, cfg);
+
+
+        Portal.cart.DownloadList.superclass.constructor.call(this, config);
+
+
+
+
+
+
+
+
+        this.on('afterrender', function () {
+
+            //this.store = this.downloadItemsStore;
+            //this.render(document.body);
+            //this.selectedView.refresh();
+            //console.log(this);
+
+        }, this);
         Ext.MsgBus.subscribe("downloadCart.cartContentsUpdated", function() {
             this.store.load();
             console.log("UPDATED");

@@ -87,7 +87,7 @@ function doDownload(){
 				alert("The download cart is empty.  Please add an item to the cart and try again.");
 			}
 			else{
-				new Portal.ui.DownloadCartConfirmationWindow().show();
+				new Portal.cart.DownloadCartConfirmationWindow().show();
 
 			}
 		},

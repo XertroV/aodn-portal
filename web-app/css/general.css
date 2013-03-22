@@ -982,7 +982,7 @@ div.allwhite {
 }
 
 .styledButton {
-    background: url("../images/mapshadow.png") repeat-x scroll left top #666666;
+    background-color: #666666;
     border-radius: 14px;
     color: white;
     float: right;
