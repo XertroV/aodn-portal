@@ -21,21 +21,35 @@ Portal.cart.DownloadList = Ext.extend(Ext.DataView, {
 
         var template = new Ext.XTemplate(
             '<tpl for=".">',
-            '<div class="x-grid3-row" >',
-            '<span class="x-editable">{title}</span></div>',
+            '<div class="x-grid3-row" >{title}</div>',
+            '<div >{[ this.getFiles(values) ]}</div>',
             '</tpl>',
-            '<div class="x-clear"></div>'
+            '<div class="x-clear"></div>',
+            {
+                getFiles: function(values) {
+                    var html = "";
+                    Ext.each(values.downloads, function(f) {
+                        console.log(f);
+                        html += subFilesTemplate.apply(f);
+                    });
+                    return html;
+
+                }
+
+            }
+        );
+        var subFilesTemplate = new Ext.XTemplate(
+            '<div  >' +
+                '<a href="{href}" target="_blank" title="{title}" >{title} ({type})</a></div>'
         );
 
 
         var config = Ext.apply({
             id: "downloadList",
             store: this.downloadItemsStore,
-            loadingText: "are we there yet",
-            emptyText: "are we not yet",
             autoShow: true,
             tpl: template,
-            overClass:'doesitpickthisup',
+            //overClass:'x-grid3-row-over',
             minHeight: 600
         }, cfg);
 
@@ -45,7 +59,7 @@ Portal.cart.DownloadList = Ext.extend(Ext.DataView, {
 
         Ext.MsgBus.subscribe("downloadCart.cartContentsUpdated", function() {
             this.downloadItemsStore.load();
-            console.log("UPDATED");
+            //console.log("UPDATED");
         }, this);
 
         console.log(this.downloadItemsStore);
