@@ -66,12 +66,6 @@ Portal.cart.DownloadCartPanel = Ext.extend(Ext.Panel, {
 
         Portal.cart.DownloadCartPanel.superclass.constructor.call(this, config);
 
-        this.on('afterrender', function () {
-
-
-            console.log(this.listPanel);
-
-        }, this);
     }
 });
 
