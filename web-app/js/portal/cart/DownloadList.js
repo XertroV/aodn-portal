@@ -43,27 +43,11 @@ Portal.cart.DownloadList = Ext.extend(Ext.DataView, {
         Portal.cart.DownloadList.superclass.constructor.call(this, config);
 
 
-
-
-
-
-
-
-        this.on('afterrender', function () {
-
-            //this.store = this.downloadItemsStore;
-            //this.render(document.body);
-            //this.selectedView.refresh();
-            //console.log(this);
-
-        }, this);
         Ext.MsgBus.subscribe("downloadCart.cartContentsUpdated", function() {
-            this.store.load();
+            this.downloadItemsStore.load();
             console.log("UPDATED");
         }, this);
 
-        console.log(this.store);
+        console.log(this.downloadItemsStore);
     }
 });
-
-Ext.reg('portal.cart.downloadList', Portal.cart.DownloadList);
