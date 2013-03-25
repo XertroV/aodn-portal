@@ -19,7 +19,7 @@ Portal.cart.DownloadCartPanel = Ext.extend(Ext.Panel, {
         var footer = new Ext.Panel( {
             region: 'south',
             height: 80,
-            padding: '20px',
+            padding: '10px',
             unstyled: true,
             layout: 'fit',
             anchor:'right 20%',
@@ -44,14 +44,14 @@ Portal.cart.DownloadCartPanel = Ext.extend(Ext.Panel, {
                 {
                     // this is a temporary header block until portal 3 workflow
                     region: 'north',
-                    height: 70,
-                    padding: '10px 5px',
+                    height: 50,
+                    padding: '0px 5px',
                     html: '<div class="menuHeader">Data Download Cart</div>'
                 },
                 {
                     region:'center',
                     layout:'fit',
-                    padding: '20px',
+                    padding: '0px 20px',
                     stateful: false,
                     items: [
                         this.listPanel
