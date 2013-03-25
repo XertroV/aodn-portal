@@ -9,7 +9,7 @@
 OpenLayers.Util.extend(OpenLayers.Lang.en, {
 
     //DownloadCartPanel.js
-    okdownload: 'OK Download Selected',
+    okdownload: 'Download All',
     clearcart: "Clear Cart",
 
     layerChooserMenuHeader: 'Map Layer Chooser',
