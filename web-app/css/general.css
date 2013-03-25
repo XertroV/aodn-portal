@@ -978,7 +978,7 @@ div.allwhite {
 
 
 #header .hiddenCartStatus {
-    display: block;
+    display: none ;
 }
 
 .styledButton {
