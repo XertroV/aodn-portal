@@ -11,6 +11,7 @@ OpenLayers.Util.extend(OpenLayers.Lang.en, {
     //DownloadCartPanel.js
     okdownload: 'Download All',
     clearcart: "Clear Cart",
+    emptyCartText: "The cart is empty of datasets to download....",
 
     layerChooserMenuHeader: 'Map Layer Chooser',
 

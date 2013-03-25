@@ -101,16 +101,15 @@ function _handleSuccess( resp ) {
     var response = resp.responseText;
 
     if ( !_isValidNumber( response ) ) {
-
         console.log( 'Invalid response from server: \'' + response + '\' (but with success code ' + resp.status + ')' );
         _updateCount( "?" );
     }
     else {
-
         _updateCount( response );
+        Ext.MsgBus.publish("downloadCart.cartContentsUpdated", response);
     }
 
-    Ext.MsgBus.publish("downloadCart.cartContentsUpdated");
+
 }
 
 // Internal methods

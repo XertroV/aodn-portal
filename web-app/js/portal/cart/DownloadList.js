@@ -45,22 +45,23 @@ Portal.cart.DownloadList = Ext.extend(Ext.DataView, {
         var config = Ext.apply({
             id: "downloadList",
             store: this.downloadItemsStore,
-            //autoShow: true,
+            emptyText: OpenLayers.i18n("emptyCartText"),
             tpl: template,
-            autoScroll: true//,
-            //overClass:'x-grid3-row-over',
-            //minHeight: 600
+            autoScroll: true
         }, cfg);
 
 
         Portal.cart.DownloadList.superclass.constructor.call(this, config);
 
 
-        Ext.MsgBus.subscribe("downloadCart.cartContentsUpdated", function() {
+        Ext.MsgBus.subscribe("downloadCart.cartContentsUpdated", function(status, count) {
             this.downloadItemsStore.load();
-            //console.log("UPDATED");
+            //if (String(count) == "0") {
+            //    console.log(count);
+            //    this.refresh();
+            //}
+
         }, this);
 
-        console.log(this.downloadItemsStore);
     }
 });
