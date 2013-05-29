@@ -12,14 +12,11 @@
     <h1 id="headerTitle">${configInstance?.name}</h1>
     <g:if test="${showLinks}">
         <div id="viewPortLinks">
-            <div class="viewPortLinksBackground viewPortLinks" id="viewPortTab0"><a href="" onClick="setViewPortTab(0);
-            return false;">Home</a></div>
+            <div class="viewPortLinksBackground viewPortLinks" id="viewPortTab0"><a href="" onClick="setViewPortTab(HomeTab); return false;">Home</a></div>
 
-            <div class="viewPortLinksBackground viewPortLinks" id="viewPortTab1"><a href="" onClick="setViewPortTab(1);
-            return false;">Map</a></div>
+            <div class="viewPortLinksBackground viewPortLinks" id="viewPortTab1"><a href="" onClick="setViewPortTab(MapTab); return false;">Map</a></div>
 
-            <div class="viewPortLinksBackground viewPortLinks" id="viewPortTab2"><a href="" onClick="setViewPortTab(2);
-            return false;">Search</a></div>
+            <div class="viewPortLinksBackground viewPortLinks" id="viewPortTab2"><a href="" onClick="setViewPortTab(SearchTab); return false;">Search</a></div>
         </div>
     </g:if>
 
@@ -49,7 +46,7 @@
                title="${link.tooltipText}">${link.linkText}</a></g:each>
     </div>
 
-    <div id="downloadCartStatus" class="hiddenCartStatus">
+    <div id="downloadCartStatus" class="hidden">
         <img src="${resource(dir: 'images', file: 'cart.png')}" id="cartLogo"/> &nbsp; <b><span id="downloadCartSize">0</span></b> item(s)<br/>
         <a href="#" onclick="javascript:showCartTabPanel();">Download Data</a>
 

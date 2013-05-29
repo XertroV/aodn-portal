@@ -27,24 +27,21 @@ class FilterController {
     }
 
     def save = {
-        def filterInstance = new Filter()
 
-        def layerInstance = Layer.get( Long.valueOf(params.layerId) )
-        filterInstance.name = params.name
+	    def filterInstance = new Filter(params)
+	    filterInstance.layer = Layer.get(params.layerId)
 
-        filterInstance.type = params.type
-        filterInstance.label = params.label
+	    // Split possible values on comma.
+	    filterInstance.possibleValues = params.possibleValues?.tokenize(",") ?: [] // Todo: separate (possibly into a 'before' filter?
 
-        if(params.possibleValues.length() > 0)
-            filterInstance.possibleValues = params.possibleValues.split(",")
-        else
-            filterInstance.possibleValues = []
+	    if (filterInstance.save()) {
 
-        filterInstance.layer = layerInstance
+		    redirect(controller: "layer", action: "editFilters", id: filterInstance.layerId)
+	    }
+	    else {
 
-        filterInstance.save(flush: true)
-
-        redirect(controller:  "layer", action: "editFilters", id: layerInstance.id)
+		    redirect(action: 'edit', params: params)
+	    }
     }
 
     def edit = {
@@ -59,7 +56,7 @@ class FilterController {
             if(concatValues.length() > 0)
                 concatValues = concatValues.substring(1)
 
-            return [filterInstance: filterInstance, filterTypes: FilterTypes.values(), concatValues: concatValues]
+            return [filterInstance: filterInstance, filterTypes: FilterType.values(), concatValues: concatValues]
         }
     }
 
@@ -67,7 +64,7 @@ class FilterController {
         def filterInstance = Filter.get(params.id)
 
         if(filterInstance){
-            
+
             if (params.version) {
                 def version = params.version.toLong()
                 if (filterInstance.version > version) {
@@ -78,11 +75,7 @@ class FilterController {
             }
 
             filterInstance.properties = params
-
-            if(params.possibleValues.length() > 0)
-                filterInstance.possibleValues = params.possibleValues.split(",")
-            else
-                filterInstance.possibleValues = []
+	        filterInstance.possibleValues = params.possibleValues?.tokenize(",") ?: []
 
             if (!filterInstance.hasErrors() && filterInstance.save(flush: true)) {
                 flash.message = "${message(code: 'default.updated.message', args: [message(code: 'filter.label', default: 'Filter'), filterInstance.id])}"
@@ -148,20 +141,16 @@ class FilterController {
 
             def layer = Layer.find(query)
 
+            log.debug("found layer: " + layer)
+
             def newFilters = postData.filters
 
             if(layer){
                 newFilters.each(){ name, theFilter ->
                     def filter = Filter.findByLayerAndName(layer, name)
 
-                    def type = theFilter.type
-
-                    if(theFilter.type.startsWith("Geometry")){
-                        type = FilterTypes.BoundingBox
-                    }
-                    else if(theFilter.type.equals("DateTime")){
-                        type = FilterTypes.Date
-                    }
+                    log.debug(theFilter.type)
+                    def type = FilterType.typeFromString(theFilter.type)
 
                     if(!filter){
                         filter = new Filter(name: theFilter.name, type: type, layer: layer, label: theFilter.name)
@@ -174,7 +163,7 @@ class FilterController {
                      */
                     filter.possibleValues = theFilter.possibleValues.collect{
                         if(it.length() > 255){
-                            log.warn("filter length longer than 255.  Value was trucated from this: " + it)
+                            log.info("filter length longer than 255.  Value was trucated from this: " + it)
                             it[0..251] + "..."
                         }
                         else{
@@ -184,18 +173,21 @@ class FilterController {
 
                     try{
                         if (!filter.hasErrors() && filter.save(flush: true)) {
-                            render status: 200, text: "Complete (saved)"
+                            render text: "Complete (saved)"
+                        }
+                        else{
+                            log.debug("Unable to save filter: " + filter.errors)
                         }
                     }
                     catch(Exception e){
-                        log.debug("Error while trying to save filter: $e.message")
+                        log.warn("Error while trying to save filter: $e.message")
                         render(status: 500, text: "Error saving or updating filter: $e")
                     }
                 }
             }
             else{
-                log.debug("Unable to find layer on server $hostPattern with layer $layerName")
-                render(status: 500, text: "Unable to find layer on server $hostPattern with layer $layerName")
+                log.debug("Unable to find layer on server $hostPattern with name $layerName")
+                render text: "Unable to find layer on server $hostPattern with name $layerName"
             }
         }
     }
@@ -216,5 +208,4 @@ class FilterController {
         log.info("No WFS Scanner password configured for portal")
         return false
     }
-
 }

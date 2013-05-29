@@ -7,19 +7,29 @@
 
 Ext.namespace('Portal.ui');
 
+// Tab indexes (global)
+HomeTab = 0;
+MapTab = 1;
+SearchTab = 2;
+DownloadCartTab = 3;
+
 Portal.ui.MainTabPanel = Ext.extend(Ext.TabPanel, {
 
     constructor:function (cfg) {
-        this.portalPanel = new Portal.ui.PortalPanel({appConfig:Portal.app.config, startSnapshot:cfg.startSnapshot});
-        this.searchTabPanel = new Portal.search.SearchTabPanel({mapPanel:this.getMapPanel()});
+
+        this.portalPanel = new Portal.ui.PortalPanel({appConfig:Portal.app.config});
+        this.searchTabPanel = this._initSearchTabPanel(cfg);
         this.homePanel = new Portal.ui.HomePanel({appConfig:Portal.app.config});
         this.downloadCartPanel = new Portal.cart.DownloadCartPanel();
 
         var config = Ext.apply({
             xtype:'tabpanel', // TabPanel itself has no title
             autoDestroy:false, // wont destroy tab contents when switching
-            activeTab:0,
-            margins:{right:5},
+            activeTab:HomeTab,
+            margins: {
+                left: 5,
+                right: 5
+            },
             unstyled:true,
             // method to hide the usual tab panel header with css
             headerCfg:{
@@ -39,13 +49,28 @@ Portal.ui.MainTabPanel = Ext.extend(Ext.TabPanel, {
             this.portalPanel.fireEvent('tabchange');
         }, this);
         Ext.MsgBus.subscribe('openDownloadCartPanelItem', function() {
-            this.setActiveTab(3);
+            this.setActiveTab(DownloadCartTab);
         }, this);
 
         Ext.MsgBus.subscribe('selectedLayerChanged', this.onSelectedLayerChange, this);
     },
 
+    _initSearchTabPanel: function(cfg) {
 
+        if (appConfigStore.isFacetedSearchEnabled()) {
+            return new Portal.ui.search.SearchPanel({
+                itemId: 'searchPanel',
+                proxyUrl: proxyURL,
+		        catalogUrl: Portal.app.config.catalogUrl,
+		        protocols: Portal.app.config.metadataLayerProtocols.split("\n").join(' or '),
+		        dragAndDrop: cfg.dragAndDrop,
+                resultGridSize: 10
+		    });
+        }
+        else {
+            return new Portal.search.SearchTabPanel({mapPanel:this.getMapPanel()});
+        }
+    },
 
     getPortalPanel:function () {
         return this.portalPanel;
@@ -60,7 +85,7 @@ Portal.ui.MainTabPanel = Ext.extend(Ext.TabPanel, {
     },
 
     showPortalPanel:function () {
-        this.setActiveTab(1);
+        this.setActiveTab(MapTab);
     },
 
     setActiveTab:function (item) {
@@ -94,10 +119,6 @@ Portal.ui.MainTabPanel = Ext.extend(Ext.TabPanel, {
 
     isMapSelected:function () {
         return this.getActiveTab() === this.portalPanel;
-    },
-
-    loadSnapshot:function (id) {
-        this.getMapPanel().loadSnapshot(id);
     },
 
     onSelectedLayerChange:function () {

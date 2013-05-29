@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2012 IMOS
  *
@@ -48,9 +47,10 @@ Portal.filter.FilterPanel = Ext.extend(Ext.Panel, {
     },
 
     createFilter: function(layer, filter){
+
     	var newFilter = undefined;
     	if(filter.type === "String"){
-    		newFilter = new  Portal.filter.FilterCombo({
+    		newFilter = new  Portal.filter.ComboFilter({
     			fieldLabel: filter.label
     		});
 
@@ -70,6 +70,11 @@ Portal.filter.FilterPanel = Ext.extend(Ext.Panel, {
             	fieldLabel: filter.label
             })
     	}
+        else if (filter.type === "Number") {
+            newFilter = new Portal.filter.NumberFilter({
+                fieldLabel: filter.label
+            });
+        }
     	else{
     		//Filter hasn't been defined
     	}
@@ -130,16 +135,20 @@ Portal.filter.FilterPanel = Ext.extend(Ext.Panel, {
 				},
 				success: function(resp, opts) {
 					var filters = Ext.util.JSON.decode(resp.responseText);
-					if(filters.length > 0){
+                    var aFilterIsEnabled = false;
+
+                    Ext.each(filters,
+                        function(filter, index, all) {
+                            if(filter.enabled){
+                                this.createFilter(layer, filter);
+                                aFilterIsEnabled = true
+                            }
+                        },
+                        this
+                    );
+
+					if(aFilterIsEnabled){
 						this.setVisible(true);
-                        Ext.each(filters,
-                            function(filter, index, all) {
-                                if(filter.enabled){
-                                    this.createFilter(layer, filter);
-                                }
-                            },
-                            this
-                        );
 
 						this.addButton = new Ext.Button({
 							cls: "x-btn-text-icon",
@@ -243,22 +252,22 @@ Portal.filter.FilterPanel = Ext.extend(Ext.Panel, {
 		tup.link = new Object();
 
 		//pretending to be a geonetwork metadata record
-		tup.record.data["rec_uuid"] = this.layer.getMetadataUrl();
-		tup.record.data["rec_title"] =  this.layer.title;
-		tup.record.data["title"] =  this.layer.title;
-		tup.link["type"] =  "application/x-msexcel";
+		tup.record.data["uuid"] = this.layer.getMetadataUrl();
+		tup.record.data["title"] =  this.layer.name;
+		tup.link["type"] =  "text/csv";
 		tup.link["href"] =  this._makeDownloadURL();
 		tup.link["protocol"] =  "WWW:DOWNLOAD-1.0-http--downloaddata";
 		tup.link["preferredFname"] = this._makePreferredFname();
+        tup.link["title"] = "Filtered " + this.layer.name + " data";
 
         addToDownloadCart(tup);
     },
-    
+
     _makePreferredFname: function(){
         // replace ':' used to namespace layers by geoserver with '#'
         // as its not allowed in windows filenames
         var preferredName = this.layer.params.LAYERS.replace(':', '#');
-        
+
         return preferredName + ".csv"
     }
 });

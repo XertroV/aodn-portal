@@ -7,10 +7,7 @@
 
 --%>
 
-
-
-<%@ page import="au.org.emii.portal.Filter" %>
-<%@ page import="au.org.emii.portal.FilterTypes" %>
+<%@ page import="au.org.emii.portal.FilterType; au.org.emii.portal.Filter" %>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -21,7 +18,6 @@
     <body>
         <div class="nav">
             <span class="menuButton"><a class="home" href="${createLink(uri: '/')}"><g:message code="default.home.label"/></a></span>
-            <span class="menuButton"><g:link class="list" action="list"><g:message code="default.list.label" args="[entityName]" /></g:link></span>
             <span class="menuButton"><g:link class="create" action="create"><g:message code="default.new.label" args="[entityName]" /></g:link></span>
         </div>
         <div class="body">
@@ -40,7 +36,7 @@
                 <div class="dialog">
                     <table>
                         <tbody>
-                        
+
                             <tr class="prop">
                                 <td valign="top" class="name">
                                   <label for="name"><g:message code="filter.name.label" default="Name" /></label>
@@ -55,7 +51,7 @@
                                     <label for="label"><g:message code="filter.label.label" default="Enabled" /></label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean: filterInstance, field: 'enabled', 'errors')}">
-                                    <g:checkBox name="enabled" checked="${filterInstance?.label}" />
+                                    <g:checkBox name="enabled" checked="${filterInstance?.enabled}" />
                                 </td>
                             </tr>
 
@@ -77,17 +73,16 @@
 								</td>
 							</tr>
 
-                        
                             <tr class="prop">
                                 <td valign="top" class="name">
                                   <label for="type"><g:message code="filter.type.label" default="Type" /></label>
                                 </td>
 
                                 <td valign="top" class="value ${hasErrors(bean: filterInstance, field: 'type', 'errors')}">
-								 	<g:select name="type" from="${FilterTypes?.values()}" value="${filterInstance?.type.getKey()}" optionKey="key" />
+								 	<g:select name="type" from="${FilterType?.values()}" value="${filterInstance?.type.getKey()}" optionKey="key" />
 								</td>
                             </tr>
-                        
+
                             <tr class="prop">
                                 <td valign="top" class="name">
                                   <label for="possibleValues"><g:message code="filter.possibleValues.label" default="Values" /></label>
@@ -96,8 +91,6 @@
                                 	<g:textArea name="possibleValues" value="${concatValues}" />
                                 </td>
                             </tr>
-                        
-
                         </tbody>
                     </table>
                 </div>

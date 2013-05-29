@@ -21,7 +21,33 @@ describe("Portal.details.AnimationControlsPanel", function() {
             );
     });
 
-	describe("_getNewTimeValue", function() {
+    describe("speedUp button", function() {
+        it("halves 'speed' and starts animation", function() {
+
+            animationControlsPanel.speed = 10;
+            spyOn(animationControlsPanel, '_startPlaying');
+            animationControlsPanel.speedUp.fireEvent("click");
+            expect(animationControlsPanel._startPlaying).toHaveBeenCalled();
+            expect(animationControlsPanel.speed).toBe(5);
+
+        });
+    });
+
+
+    describe("slowDown button", function() {
+        it("doubles 'speed' and starts animation", function() {
+
+            animationControlsPanel.speed = 10;
+            spyOn(animationControlsPanel, '_startPlaying');
+            animationControlsPanel.slowDown.fireEvent("click");
+            expect(animationControlsPanel._startPlaying).toHaveBeenCalled();
+            expect(animationControlsPanel.speed).toBe(20);
+
+        });
+    });
+
+
+    describe("_getNewTimeValue", function() {
 		it("select default if old time doesn't exist", function() {
 			var oldTime = "13:25:00 (+10:00)";
 
@@ -134,12 +160,10 @@ describe("Portal.details.AnimationControlsPanel", function() {
 	describe('layer messages', function() {
 	    it('on removeAll', function() {
 
-	        spyOn(animationControlsPanel, 'isAnimating').andReturn(true);
 	        spyOn(animationControlsPanel, 'removeAnimation');
 
 	        Ext.MsgBus.publish('removeAllLayers');
 
-	        expect(animationControlsPanel.isAnimating).toHaveBeenCalled();
 	        expect(animationControlsPanel.removeAnimation).toHaveBeenCalled();
 	    });
 
@@ -155,7 +179,6 @@ describe("Portal.details.AnimationControlsPanel", function() {
             Ext.MsgBus.publish('removeLayer', openLayer);
 
             expect(animationControlsPanel.removeAnimation).toHaveBeenCalled();
-            expect(Portal.ui.AnimationPanel.prototype.setVisible).toHaveBeenCalledWith(false);
         });
 
         describe('on selectedLayerChanged', function() {
@@ -201,12 +224,10 @@ describe("Portal.details.AnimationControlsPanel", function() {
 
         it('on reset map', function() {
 
-            spyOn(animationControlsPanel, 'isAnimating').andReturn(true);
             spyOn(animationControlsPanel, 'removeAnimation');
 
             Ext.MsgBus.publish('reset');
 
-            expect(animationControlsPanel.isAnimating).toHaveBeenCalled();
             expect(animationControlsPanel.removeAnimation).toHaveBeenCalled();
         });
     });
