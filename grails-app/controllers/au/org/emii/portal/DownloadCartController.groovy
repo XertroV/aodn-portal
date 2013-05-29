@@ -25,8 +25,6 @@ class DownloadCartController {
             return
         }
 
-        println(params.newEntries);
-
         def newEntries = JSON.parse( params.newEntries as String )
 
         def cart = _getCart()
@@ -44,25 +42,29 @@ class DownloadCartController {
         render _getCartSize().toString()
     }
 
-    def removeRecord = {
+    def modifyRecordAvailability = {
         if ( !params.rec_uuid ) {
             render text: "No item specified to remove", status: 500
             return
         }
+        if ( !params.disableFlag ) {
+            render text: "No flag specified to modify", status: 500
+            return
+        }
 
         def uuid = params.rec_uuid
-
         def cart = _getCart()
 
-
-        cart.removeAll {
-            return (it.rec_uuid == uuid)
+        cart.each{
+            if (it.rec_uuid == uuid) {
+                it.disableFlag = params.disableFlag.toBoolean()
+            }
         }
 
         _setCart( cart )
-
         render _getCartSize().toString()
     }
+
 
     def getSize = {
 
@@ -82,12 +84,14 @@ class DownloadCartController {
             if (!record){
                 record = [:]
                 record.title = it.rec_title
+                record.disable = it.disableFlag
                 record.uuid= uuid
                 record.downloads = []
                 records.put(uuid,record)
             }
 
             def download = [:]
+
 
             download.protocol = it.protocol
             download.title = it.title
@@ -139,9 +143,16 @@ class DownloadCartController {
         return session.downloadCart ?: [] as Set
     }
 
+    // count of items not marked as disabled
     def _getCartSize() {
 
-        return _getCart().size()
+        def counter = 0
+        _getCart().each {
+            if (!it.disableFlag) {
+               counter += 1
+            }
+        }
+        return counter
     }
 
     void _setCart( newCart ) {

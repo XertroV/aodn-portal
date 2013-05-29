@@ -257,13 +257,13 @@ class LayerController {
                      || params.viewParams.openLayersZoomLevel)) {
                 layerInstance.viewParams = null
             }
-            
+
             if (params.viewParams) {
                 layerInstance.viewParams = new LayerViewParameters(params.viewParams + [layer: layerInstance])
             }
-            
+
             params.remove('viewParams')
-            
+
             layerInstance.properties = params
 
             if (!layerInstance.hasErrors() && layerInstance.save(flush: true)) {
@@ -303,7 +303,7 @@ class LayerController {
 
     def saveOrUpdate = {
 
-        log.info "Capabilities data length: ${params.capabilitiesData?.length()}"
+        log.debug "Capabilities data length: ${params.capabilitiesData?.length()}"
         log.debug "metadata: ${params.metadata}"
 
         // Check credentials
@@ -329,6 +329,8 @@ class LayerController {
             def capabilitiesData = params.capabilitiesData
             _validateCapabilitiesData capabilitiesData
 
+	        log.info "saveOrUpdate Layer. Finding server with uri: ${metadata.serverUri}"
+
             // Get server w/ metdata
             def server = Server.findByUri( metadata.serverUri )
 
@@ -341,11 +343,20 @@ class LayerController {
             server.updateOperations serverCapabilities.operations
 
             server.lastScanDate = new Date()
+
+	        log.debug "Before save"
+
             server.save( failOnError: true )
+
+	        log.debug "After save, before render success message"
 
             render status: 200, text: "Complete (saved)"
 
+	        log.debug "After render. Before _recache(server)"
+
             _recache(server)
+
+	        log.debug "Recache complete"
         }
         catch (Exception e) {
 
@@ -554,7 +565,7 @@ class LayerController {
         return layerData
     }
 
-        def _getLayerDefaultData(layer){
+	def _getLayerDefaultData(layer) {
         def excludes = [
                 "class",
                 "metaClass",
@@ -583,9 +594,11 @@ class LayerController {
 
         if ( layerInstance ) {
 
-            layerInstance.filters?.each {
-                results.add(it.toLayerData())
-            }
+			def filters = layerInstance.filters?.sort()
+
+            filters.findAll { it.enabled }.each {
+				results.add(it.toLayerData())
+			}
 
             render results as JSON
         }

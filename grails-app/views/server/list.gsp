@@ -20,10 +20,19 @@
         <div class="nav">
           <div id="logo"></div>
             <span class="menuButton"><a class="home" href="${createLink(uri: '/')}"><g:message code="default.home.label"/></a></span>
-            <span class="menuButton"><g:link class="create" action="create"><g:message code="default.new.label" args="[entityName]" /></g:link></span>
+            <span class="menuButton"><a class="refresh" href="${createLink(uri: '/server/refreshList')}">Refresh</a></span>
         </div>
         <div class="body">
             <h1><g:message code="default.list.label" args="[entityName]" /></h1>
+
+            <div>
+                <div>
+                    <b>Scanners configured</b><br>
+                    WMS Scanner (layers): <span style="font-family: monospace;"><g:link url="${wmsScannerUrl}" target="_blank">${wmsScannerUrl}</g:link></span><br>
+                    WFS Scanner (features): <span style="font-family: monospace;"><g:link url="${wfsScannerUrl}" target="_blank">${wfsScannerUrl}</g:link></span>
+                </div>
+            </div>
+
             <g:if test="${flash.message}">
             <div class="message">${flash.message}</div>
             </g:if>
@@ -56,7 +65,7 @@
                                         'disable' : '' }
                             ${(serverInstanceList[i].allowDiscoveries) ?
                                         '' : 'disable' }">
-                            <td><g:link action="show" id="${serverInstance.id}">${fieldValue(bean: serverInstance, field: "name")}</g:link></td>
+                            <td><g:link action="edit" id="${serverInstance.id}">${fieldValue(bean: serverInstance, field: "name")}</g:link></td>
 
                             <td>${fieldValue(bean: serverInstance, field: "shortAcron")}</td>
 
@@ -120,7 +129,7 @@
                                             <%
                                         }
                                         else {  %>
-                                            <td>No job scheduled  <br />
+                                            <td>No job scheduled<br />
                                             <g:link controller="wmsScanner" action="callRegister"
                                                     params="[serverId: serverInstance.id]">${message(code: 'server.createScanJob.label', default: 'Create&nbsp;Scan&nbsp;Job')}</g:link></td>
                                             <%
@@ -138,7 +147,7 @@
                                         if(wfsJob != null && wfsJob.status != null){
                                             %>
                                             <td>
-                                                <%= wfsJob.status.name %>     <br/>
+                                                <%= wfsJob.status.name %><br/>
                                                 <%
                                                 if(wfsJob.status.name.equals("ERROR")){
                                                     print wfsJob.error + "<br />"
@@ -151,7 +160,7 @@
                                                 </td>
                                                 <%
 
-                                         }
+                                        }
                                         else{
                                             if(serverInstance.type.startsWith("GEO")){
                                                 %>
@@ -173,7 +182,6 @@
                                             <td>Check scanner</td>
                                         <%
                                     }
-
                                 }
                             %>
 

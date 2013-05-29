@@ -26,6 +26,8 @@ Portal.ui.AnimationPanel = Ext.extend(Ext.Panel, {
             }
         });
 
+        this.setvisTimeoutId = null;
+
         this.animationControlsPanel = new Portal.details.AnimationControlsPanel();
 
         this.controlButtonPanel = new Ext.Panel({
@@ -105,28 +107,40 @@ Portal.ui.AnimationPanel = Ext.extend(Ext.Panel, {
         Portal.ui.AnimationPanel.superclass.constructor.call(this, config);
         
         this.setPosition(1, 0); // override with CSS later
-        
-        Ext.MsgBus.subscribe('removeLayer', function() {
-            this.setVisible(false);
-        }, this);
 
         Ext.MsgBus.subscribe('reset', function() {
             this.setVisible(false);
         }, this);
+
         
-        Ext.MsgBus.subscribe('selectedLayerChanged', function(subject, openLayer) {
-            
-            if (!this.animationControlsPanel.isAnimating()) {
+        Ext.MsgBus.subscribe('selectedLayerChanged', function(msg,openLayer) {
+            // delay hiding/showing until animation cleaned up
+            var task = new Ext.util.DelayedTask(function(){
+                this._setAnimationPanelVis(openLayer);
+            }, this);
+
+            //calls function in 500ms
+            task.delay(500);
+
+        }, this);
+
+    },
+
+    _setAnimationPanelVis: function(openLayer) {
+
+
+        if (this.map) {
+            // no layers no show
+            if (this.map.getLayersBy("isBaseLayer", false).length == 0 ) {
+                this.setVisible(false);
+            }
+            else if (!this.animationControlsPanel.isAnimating()) {
+                // there is no animation running so it can be hidden if not applicable
                 if (openLayer) {
-                    if (openLayer.isAnimatable()) {
-                        this.setVisible(true);
-                    }
-                    else {
-                        this.setVisible(false);
-                    }
+                    this.setVisible(openLayer.isAnimatable());
                 }
             }
-        }, this);
+        }
     },
     
     setMap: function(map) {

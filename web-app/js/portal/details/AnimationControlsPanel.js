@@ -30,30 +30,44 @@ Portal.details.AnimationControlsPanel = Ext.extend(Ext.Panel, {
 		Portal.details.AnimationControlsPanel.superclass.constructor.call(this, config);
 		
 		Ext.MsgBus.subscribe('removeAllLayers', function() {
-	        if (this.isAnimating()) {
-	            this.removeAnimation();
-	        }
+	        this.removeAnimation();
 		}, this);
         Ext.MsgBus.subscribe('reset', function() {
             this.removeAnimation();
         }, this);
 
-        Ext.MsgBus.subscribe('removeLayer', function() {
-            this.removeAnimation();
+        Ext.MsgBus.subscribe('removeLayer', function(mesg,openLayer) {
+            if (openLayer === this.originalLayer && this.isAnimating()) {
+                this.removeAnimation();
+                // arrives here after selectedLayerChanged listener has completed
+                this.setSelectedLayer(this.activeLayersPanelSelectedLayer);
+            }
+
         }, this);
         
         Ext.MsgBus.subscribe('selectedLayerChanged', function(subject, openLayer) {
-            if (!this.isAnimating()) {
-                if (openLayer) {
-                    if (openLayer.isAnimatable()) {
-                        //show the panel for the first time!
-                        this.setSelectedLayer(openLayer);
-                        this.update();
+
+            if (openLayer) {
+
+                this.activeLayersPanelSelectedLayer = openLayer;
+
+                if (!this.isAnimating()) {
+
+                    if (openLayer) {
+                        if (openLayer.isAnimatable()) {
+                            //show the panel for the first time!
+                            this.setSelectedLayer(openLayer); //set to new
+                            this.update();
+                        }
+                    }
+                    else {
+                        this.removeAnimation();
                     }
                 }
-                else {
-                    this.removeAnimation();
-                }
+            }
+            // openlayer is null so there are no layers
+            else {
+                this.removeAnimation();
             }
         }, this);
 	},
@@ -68,6 +82,7 @@ Portal.details.AnimationControlsPanel = Ext.extend(Ext.Panel, {
 		this.MAX_SPEED_MULTIPLIER = 32;
 
 		this.animatedLayers = new Array();
+        this.activeLayersPanelSelectedLayer = null;
 		var parent = this;
 
 		this.warn = new Ext.form.Label({
@@ -83,7 +98,8 @@ Portal.details.AnimationControlsPanel = Ext.extend(Ext.Panel, {
 					listeners : {
 						scope : this,
 						'click' : function(button, event) {
-							this._resetTimer(this.speed / 2);
+                            this.speed=this.speed / 2;
+                            this._startPlaying();
 						}
 					},
 					tooltip : OpenLayers.i18n('speedUp')
@@ -95,7 +111,8 @@ Portal.details.AnimationControlsPanel = Ext.extend(Ext.Panel, {
 					listeners : {
 						scope : this,
 						'click' : function(button, event) {
-							this._resetTimer(this.speed * 2);
+							this.speed = this.speed * 2;
+                            this._startPlaying();
 						}
 					},
 					tooltip : OpenLayers.i18n('slowDown')
@@ -304,6 +321,7 @@ Portal.details.AnimationControlsPanel = Ext.extend(Ext.Panel, {
 	_startPlaying : function() {
 		var dates = this._getFormDates();
 		this._waitForOriginalLayer(dates[0], dates[1]);
+        this._updateButtons(this.state.PLAYING);
 	},
 
 
@@ -464,7 +482,7 @@ Portal.details.AnimationControlsPanel = Ext.extend(Ext.Panel, {
 		}
 
 	},
-
+    // this sets the selected animating layer not active layer in Active Layers panel
 	setSelectedLayer : function(layer) {
 		this.selectedLayer = layer;
 	},
@@ -563,6 +581,7 @@ Portal.details.AnimationControlsPanel = Ext.extend(Ext.Panel, {
 	 * animation doesn't start.
 	 */
 	_waitForOriginalLayer : function(startString, endString) {
+
 		if (this.selectedLayer.numLoadingTiles > 0) {
 
 			this._updateButtons(this.state.LOADING);
@@ -913,8 +932,6 @@ Portal.details.AnimationControlsPanel = Ext.extend(Ext.Panel, {
 		if (splitDates.length > 0) {
 			var startDate = this._parseIso8601Date(splitDates[0]);
 			var endDate = this._parseIso8601Date(splitDates.last());
-			
-					
 
 			// set the start/end date range for both pickers
 			this._setDateRange(this.startDatePicker, startDate, endDate);
@@ -982,10 +999,17 @@ Portal.details.AnimationControlsPanel = Ext.extend(Ext.Panel, {
 	},
 
 	getSelectedLayerTimeDimension : function() {
+
 		if ((this.selectedLayer != undefined)
 				&& (this.selectedLayer.dimensions != undefined)) {
 			for (var i = 0; i < this.selectedLayer.dimensions.length; i++) {
 				if (this.selectedLayer.dimensions[i].name == "time") {
+
+                    if (this.selectedLayer.dimensions[i].uncompressedTimeExtent == undefined) {
+                        this.selectedLayer.dimensions[i].extent = expandExtendedISO8601Dates(this.selectedLayer.dimensions[i].extent);
+                        this.selectedLayer.dimensions[i].uncompressedTimeExtent = true;
+                    }
+
 					return this.selectedLayer.dimensions[i];
 				}
 			}
@@ -1074,8 +1098,7 @@ Portal.details.AnimationControlsPanel = Ext.extend(Ext.Panel, {
 	},
 
 	_getTimeComboStartDate : function(dates) {
-		return this
-				._parseIso8601Date(dates[this._getTimeComboStartIndex(dates)]);
+		return this._parseIso8601Date(dates[this._getTimeComboStartIndex(dates)]);
 	},
 
 	_getTimeComboStartIndex : function(dates) {
@@ -1128,7 +1151,7 @@ Portal.details.AnimationControlsPanel = Ext.extend(Ext.Panel, {
 			editable : false,
 			valueField : 'time',
 			displayField : 'roundedTime',
-			width : 110
+			width : 130
 		};
 	}
 

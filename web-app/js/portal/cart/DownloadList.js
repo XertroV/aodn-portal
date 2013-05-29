@@ -2,9 +2,6 @@ Ext.namespace('Portal.cart');
 
 Portal.cart.DownloadList = Ext.extend(Ext.DataView, {
 
-
-
-
     constructor:function (cfg) {
 
         this.downloadItemsStore = new Ext.data.JsonStore({
@@ -15,16 +12,21 @@ Portal.cart.DownloadList = Ext.extend(Ext.DataView, {
             // reader configs
             root:'records',
             idProperty:'title',
-            fields:['title', 'uuid', 'downloads']
+            fields:['title', 'uuid', 'downloads', 'disable' ]
         });
         this.downloadItemsStore.load();
 
         var template = new Ext.XTemplate(
             '<tpl for=".">',
+            '<tpl if="values.disable == false">',
             '<div class="cart-row">',
-            '<div class="cart-title">{title}</div>',
+            '<div class="cart-title-row">',
+            '<div class="floatRight"><a href="#" onclick="javascript:setDownloadCartRecordDisableFlag(\'{uuid}\',\'true\'); return false;">Remove</a></div>',
+            '<span class="cart-title">{title}</span>',
+            '</div>',
             '<div class="cart-files" >{[ this.getFiles(values) ]}</div>',
             '</div>',
+            '</tpl>',
             '</tpl>',
             {
                 getFiles:function (values) {
@@ -36,11 +38,18 @@ Portal.cart.DownloadList = Ext.extend(Ext.DataView, {
                 }
             }
         );
-        var subFilesTemplate = new Ext.XTemplate(
-            '<div class="cart-file-row" >' +
-                '<a href="{href}" target="_blank" title="{title}" >{title} ({type})</a></div>'
-        );
 
+        var subFilesTemplate = new Ext.XTemplate(
+            '<div class="cart-file-row" >',
+                '{[this.markup(values)]}',
+            '</div>',
+            {
+                markup: function(values) {
+                    // todo fix metadata first? strip rubbish from titles? / markup as links when correctly flagged as such?
+                    return values.title;
+                }
+            }
+        );
 
         var config = Ext.apply({
             id:"downloadList",
@@ -50,13 +59,10 @@ Portal.cart.DownloadList = Ext.extend(Ext.DataView, {
             autoScroll:true
         }, cfg);
 
-
         Portal.cart.DownloadList.superclass.constructor.call(this, config);
-
 
         Ext.MsgBus.subscribe("downloadCart.cartContentsUpdated", function () {
             this.downloadItemsStore.load();
         }, this);
-
     }
 });

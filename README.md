@@ -1,7 +1,7 @@
-AODN Portal
-===========
+AODN Open Geospatial Portal
+===========================
 
-The AODN portal is a [Grails](http://grails.org/) application for finding, visualising, and downloading geospatial data. 
+The AODN open geospatial portal is a [Grails](http://grails.org/) application for finding, visualising, and downloading geospatial data. 
 The application integrates with the [GeoNetwork](http://geonetwork-opensource.org/) metadata catalog and [OGC Web Map Services](http://www.opengeospatial.org/standards/wms). 
 
 You can view the portal in action at the following locations;
@@ -9,6 +9,9 @@ You can view the portal in action at the following locations;
 * [AODN](http://portal.aodn.org.au) the main AODN portal
 * [IMOS](http://imos.aodn.org.au) the [Integrated Marine Observation Systems](http://www.imos.org.au) portal
 * [WAODN](http://wa.aodn.org.au) a Western Australia-focused portal
+
+## Contact
+Please post any questions in our [forum](http://portalhelp.aodn.org.au/Portal2_help/?q=forum).
 
 ## Features
 
@@ -48,7 +51,9 @@ we are in the process of removing that dependency, [you can help with that too](
 
 #### Can I Get A Pre-Built War?
 
-Yes you can. You can write to us, info at emii dot org dot au to discuss the best way of getting portal and keeping your
+Yes, you can download it [here](http://binary.aodn.org.au/).
+
+You can also write to us, info at emii dot org dot au to discuss the best way of getting portal and keeping your
 version up to date.
 
 ## Configuring Portal

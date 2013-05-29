@@ -7,7 +7,7 @@
 
 --%>
 
-<%@ page import="au.org.emii.portal.FilterTypes" %>
+<%@ page import="au.org.emii.portal.FilterType" %>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -64,7 +64,7 @@
                                     <label for="label"><g:message code="filter.enabled.label" default="Enabled" /></label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean: filterInstance, field: 'enabled', 'errors')}">
-                                    <g:checkBox name="enabled" checked="${filterInstance?.label}" />
+                                    <g:checkBox name="enabled" checked="${filterInstance?.enabled}" />
                                 </td>
                             </tr>
 
@@ -92,7 +92,7 @@
 								</td>
 								<td valign="top" class="value ${hasErrors(bean: filterInstance, field: 'type', 'errors')}">
 
-								 <g:select name="type" from="${FilterTypes?.values()}" optionKey="key" onselect="getCombo(this)" />
+								 <g:select name="type" from="${FilterType?.values()}" optionKey="key" onselect="getCombo(this)" />
 								</td>
 							</tr>
 
@@ -121,14 +121,16 @@
 				<h2>Modify an existing filter</h2>
 
                 <div class="dialog">
-                    <g:each in="${layerInstance?.filters}" var="filter">
+                    <ul>
+                    <g:each in="${layerInstance?.filters?.sort(){it.name}}" var="filter">
                         <g:if test="${filter.enabled}">
-                            <b><li><g:link controller="filter" action="edit" id="${filter.id}">${filter.label}</g:link></li></b>
+                            <li><b><g:link controller="filter" action="edit" id="${filter.id}">${filter.label}</g:link></b></li>
                         </g:if>
                         <g:else>
-                            <i><li><g:link controller="filter" action="edit" id="${filter.id}">${filter.label}</g:link></li></i>
+                            <li><i><g:link controller="filter" action="edit" id="${filter.id}">${filter.label}</g:link></i></li>
                         </g:else>
                     </g:each>
+                    </ul>
                 </div>
 			</g:if>
 		</div>

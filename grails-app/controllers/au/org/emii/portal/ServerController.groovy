@@ -1,6 +1,6 @@
 
 /*
- * Copyright 2012 IMOS
+ * Copyright 2013 IMOS
  *
  * The AODN/IMOS Portal is distributed under the terms of the GNU General Public License
  *
@@ -22,10 +22,23 @@ class ServerController {
 		redirect(action: "list", params: params)
 	}
 
+	def refreshList = {
+
+		flash.message = ""
+
+		redirect actionName: 'list'
+	}
+
 	def list = {
 		params.max = Math.min(params.max ? params.int('max') : 20, 100)
 
-        [serverInstanceList: Server.list(params), serverInstanceTotal: Server.count(), jobProperties:  getScannerStatus()]
+		[
+			serverInstanceList: Server.list(params),
+			serverInstanceTotal: Server.count(),
+			jobProperties: scannerStatus,
+			wmsScannerUrl: wmsScannerService.scannerBaseUrl,
+			wfsScannerUrl: wfsScannerService.scannerBaseUrl
+		]
 	}
 
     def listAllowDiscoveriesAsJson = {
@@ -51,21 +64,10 @@ class ServerController {
 
 		if (serverInstance.save(flush: true)) {
 			flash.message = "${message(code: 'default.created.message', args: [message(code: 'server.label', default: 'Server'), serverInstance.id])}"
-			redirect(action: "show", id: serverInstance.id)
+			redirect(action: "list", id: serverInstance.id)
 		}
 		else {
 			render(view: "create", model: [serverInstance: serverInstance])
-		}
-	}
-
-	def show = {
-		def serverInstance = Server.get(params.id)
-		if (!serverInstance) {
-			flash.message = "${message(code: 'default.not.found.message', args: [message(code: 'server.label', default: 'Server'), params.id])}"
-			redirect(action: "list")
-		}
-		else {
-			[serverInstance: serverInstance]
 		}
 	}
 
@@ -101,7 +103,7 @@ class ServerController {
 
 			if (!serverInstance.hasErrors() && serverInstance.save(flush: true)) {
 				flash.message = "${message(code: 'default.updated.message', args: [message(code: 'server.label', default: 'Server'), serverInstance.id])}"
-				redirect(action: "show", id: serverInstance.id)
+				redirect(action: "list", id: serverInstance.id)
 			}
 			else {
 				render(view: "edit", model: [serverInstance: serverInstance])
@@ -123,7 +125,7 @@ class ServerController {
 			}
 			catch (org.springframework.dao.DataIntegrityViolationException e) {
 				flash.message = "${message(code: 'default.not.deleted.message', args: [message(code: 'server.label', default: 'Server'), params.id])}"
-				redirect(action: "show", id: params.id)
+				redirect(action: "edit", id: params.id)
 			}
 		}
 		else {
@@ -140,6 +142,7 @@ class ServerController {
 			def serverIdArr = params.serverId.split("_")
 			serverInstance = Server.get( serverIdArr[ serverIdArr.size() - 1 ])
 		}
+
 		if (serverInstance) {
 			render serverInstance as JSON
 		}
@@ -177,12 +180,6 @@ class ServerController {
     }
 
     def getScannerStatus(){
-        //show servers
-
-        //callout to check status of WMS server
-        def wmsList
-        //callout to check the status of WFS servers
-        def wfsList
 
         //list of discoverable, with a list of w[m,f]s jobs
         def serverMap = [:]
@@ -195,13 +192,15 @@ class ServerController {
             scannerService, index ->
 
             try{
-                def jobList = scannerService.getStatus()
+                def jobList = scannerService.status
                 discoverables.each(){ discoverable ->
+
                     if (serverMap[discoverable] == null){
                         serverMap.put(discoverable, [null, null])
                     }
 
                     jobList.each(){ job ->
+
                         def checkURL
 
                         //TODO: Change WFS scanner to use the same variable name for uri...
@@ -222,7 +221,15 @@ class ServerController {
             }
             catch(Exception e){
                 log.debug(e.message)
-                flash.message = "Cannot contact scanner ${scannerService.getScannerBaseUrl()} for a list of current jobs.  Please make sure server is contactable."
+
+				if (flash.message) {
+					flash.message += "<hr>"
+				}
+				else {
+					flash.message = ""
+				}
+
+                flash.message += "Cannot contact scanner ${scannerService.scannerBaseUrl} for a list of current jobs.  Please make sure server is contactable."
                 scannersContactable[index]  = false
             }
         }

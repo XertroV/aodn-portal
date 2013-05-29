@@ -11,8 +11,7 @@ Portal.ui.Viewport = Ext.extend(Ext.Viewport, {
     constructor: function(cfg) {
         this.mainTabPanel = new Portal.ui.MainTabPanel({
             region: 'center',
-            activeTab: cfg.activeTab,
-            startSnapshot: cfg.startSnapshot
+            activeTab: cfg.activeTab
         });
 
         this.layerChooserPanel = new Portal.ui.LayerChooserPanel({
@@ -25,7 +24,13 @@ Portal.ui.Viewport = Ext.extend(Ext.Viewport, {
         var config = Ext.apply({
             layout: 'border',
             boxMinWidth: 1050,
-            items: [
+            items: this._getItems(cfg) }, cfg);
+
+        Portal.ui.Viewport.superclass.constructor.call(this, config);
+    },
+
+    _getItems: function(cfg) {
+        return [
                 {
                     unstyled: true,
                     region: 'north',
@@ -38,10 +43,7 @@ Portal.ui.Viewport = Ext.extend(Ext.Viewport, {
                     unstyled: true
                 },
                 this.layerChooserPanel
-
-            ]}, cfg);
-
-        Portal.ui.Viewport.superclass.constructor.call(this, config);
+        ];
     },
 
     initComponent: function() {
@@ -59,13 +61,17 @@ Portal.ui.Viewport = Ext.extend(Ext.Viewport, {
 
     setActiveTab: function(tabIndex) {
         this.mainTabPanel.setActiveTab(tabIndex);
+
+        if (appConfigStore.isFacetedSearchEnabled() && (tabIndex == SearchTab)) {
+            this.layerChooserPanel.hide();
+        }
+        else {
+            this.layerChooserPanel.show();
+        }
+        this.doLayout();
     },
 
     isMapVisible: function() {
         return this.mainTabPanel.isMapVisible();
-    },
-
-    showSnapshot: function(id) {
-        this.mainTabPanel.loadSnapshot(id);
     }
 });
